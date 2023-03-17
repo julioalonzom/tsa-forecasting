@@ -3,45 +3,35 @@
 import pandas as pd
 import pytask
 
-from tsaf.analysis.model import fit_logit_model, load_model
-from tsaf.analysis.predict import predict_prob_by_age
-from tsaf.config import BLD, GROUPS, SRC
-from tsaf.utilities import read_yaml
+from tsaf.analysis.model import fit_model, load_model
+from tsaf.analysis.predict import predict
+from tsaf.config import BLD
 
 
 @pytask.mark.depends_on(
     {
         "scripts": ["model.py", "predict.py"],
         "data": BLD / "python" / "data" / "data_clean.csv",
-        "data_info": SRC / "data_management" / "data_info.yaml",
     },
 )
 @pytask.mark.produces(BLD / "python" / "models" / "model.pickle")
-def task_fit_model_python(depends_on, produces):
-    """Fit a logistic regression model (Python version)."""
-    data_info = read_yaml(depends_on["data_info"])
-    data = pd.read_csv(depends_on["data"])
-    model = fit_logit_model(data, data_info, model_type="linear")
+def task_fit_model(depends_on, produces):
+    """."""
+    data = pd.read_csv(depends_on["data"], index_col=0, parse_dates=True)
+    model = fit_model(data)
     model.save(produces)
 
 
-for group in GROUPS:
-
-    kwargs = {
-        "group": group,
-        "produces": BLD / "python" / "predictions" / f"{group}.csv",
-    }
-
-    @pytask.mark.depends_on(
-        {
-            "data": BLD / "python" / "data" / "data_clean.csv",
-            "model": BLD / "python" / "models" / "model.pickle",
-        },
-    )
-    @pytask.mark.task(id=group, kwargs=kwargs)
-    def task_predict_python(depends_on, group, produces):
-        """Predict based on the model estimates (Python version)."""
-        model = load_model(depends_on["model"])
-        data = pd.read_csv(depends_on["data"])
-        predicted_prob = predict_prob_by_age(data, model, group)
-        predicted_prob.to_csv(produces, index=False)
+@pytask.mark.depends_on(
+    {
+        "data": BLD / "python" / "data" / "data_clean.csv",
+        "model": BLD / "python" / "models" / "model.pickle",
+    },
+)
+@pytask.mark.produces(BLD / "python" / "predictions" / "predictions.csv")
+def task_predict(depends_on, produces):
+    """Predict based on the model estimates."""
+    model = load_model(depends_on["model"])
+    data = pd.read_csv(depends_on["data"], index_col=0, parse_dates=True)
+    predicted = predict(data, model)
+    predicted.to_csv(produces)

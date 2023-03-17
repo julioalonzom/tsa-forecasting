@@ -8,6 +8,7 @@ dependencies:
   - conda-lock
   - ipykernel
   - jupyterlab
+  - numpy
   - pandas
   - pdbpp
   - pip >=21.1

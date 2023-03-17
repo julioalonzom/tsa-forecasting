@@ -3,12 +3,27 @@
 import pandas as pd
 import pytask
 
-from tsaf.analysis.model import load_model
-from tsaf.config import BLD, GROUPS, SRC
-from tsaf.final import plot_regression_by_age
-from tsaf.utilities import read_yaml
+from tsaf.config import BLD
+from tsaf.final.plot import plot_predictions
 
-for group in GROUPS:
+
+@pytask.mark.depends_on(
+    {
+        "data": BLD / "python" / "data" / "data_clean.csv",
+        "predictions": BLD / "python" / "predictions" / "predictions.csv",
+    },
+)
+@pytask.mark.produces(BLD / "python" / "figures" / "plot.png")
+def task_plot_predictions(depends_on, produces):
+    data = pd.read_csv(depends_on["data"], index_col=0, parse_dates=True)
+    predictions = pd.read_csv(depends_on["predictions"], index_col=0, parse_dates=True)
+
+    fig = plot_predictions(data, predictions)
+
+    fig.write_image(produces)
+
+
+""" for group in GROUPS:
 
     kwargs = {
         "group": group,
@@ -24,7 +39,7 @@ for group in GROUPS:
     )
     @pytask.mark.task(id=group, kwargs=kwargs)
     def task_plot_results_by_age_python(depends_on, group, produces):
-        """Plot the regression results by age (Python version)."""
+        """ """
         data_info = read_yaml(depends_on["data_info"])
         data = pd.read_csv(depends_on["data"])
         predictions = pd.read_csv(depends_on["predictions"])
@@ -35,8 +50,8 @@ for group in GROUPS:
 @pytask.mark.depends_on(BLD / "python" / "models" / "model.pickle")
 @pytask.mark.produces(BLD / "python" / "tables" / "estimation_results.tex")
 def task_create_results_table_python(depends_on, produces):
-    """Store a table in LaTeX format with the estimation results (Python version)."""
+    """ """
     model = load_model(depends_on)
     table = model.summary().as_latex()
     with open(produces, "w") as f:
-        f.writelines(table)
+        f.writelines(table) """
