@@ -6,21 +6,29 @@ import pytask
 from tsaf.config import BLD
 from tsaf.final.plot import plot_predictions
 
+for model_type in ["hw", "arima"]:
 
-@pytask.mark.depends_on(
-    {
-        "data": BLD / "python" / "data" / "data_clean.csv",
-        "predictions": BLD / "python" / "predictions" / "predictions.csv",
-    },
-)
-@pytask.mark.produces(BLD / "python" / "figures" / "plot.png")
-def task_plot_predictions(depends_on, produces):
-    data = pd.read_csv(depends_on["data"], index_col=0, parse_dates=True)
-    predictions = pd.read_csv(depends_on["predictions"], index_col=0, parse_dates=True)
+    kwargs = {
+        "produces": BLD / "python" / "figures" / f"{model_type}_predictions.png",
+        "depends_on": {
+            "data": BLD / "python" / "data" / "data_clean.csv",
+            "predictions": BLD
+            / "python"
+            / "predictions"
+            / f"{model_type}_predictions.csv",
+        },
+    }
 
-    fig = plot_predictions(data, predictions)
+    @pytask.mark.task(id=model_type, kwargs=kwargs)
+    def task_plot_predictions(depends_on, produces):
+        data = pd.read_csv(depends_on["data"], index_col=0, parse_dates=True)
+        predictions = pd.read_csv(
+            depends_on["predictions"], index_col=0, parse_dates=True,
+        )
 
-    fig.write_image(produces)
+        fig = plot_predictions(data, predictions)
+
+        fig.write_image(produces)
 
 
 """ for group in GROUPS:
