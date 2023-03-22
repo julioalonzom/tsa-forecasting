@@ -4,32 +4,43 @@ import pandas as pd
 import pytask
 
 from tsaf.config import BLD
-from tsaf.final.plot import plot_predictions
+from tsaf.final.plot import plot_forecasts, plot_metrics
 
 for model_type in ["hw", "arima"]:
 
     kwargs = {
-        "produces": BLD / "python" / "figures" / f"{model_type}_predictions.png",
+        "produces": BLD / "python" / "figures" / f"{model_type}_forecasts.png",
         "depends_on": {
             "data": BLD / "python" / "data" / "data_clean.csv",
-            "predictions": BLD
-            / "python"
-            / "predictions"
-            / f"{model_type}_predictions.csv",
+            "forecasts": BLD / "python" / "forecasts" / f"{model_type}_forecasts.csv",
         },
     }
 
     @pytask.mark.task(id=model_type, kwargs=kwargs)
-    def task_plot_predictions(depends_on, produces):
+    def task_plot_forecasts(depends_on, produces):
         data = pd.read_csv(depends_on["data"], index_col=0, parse_dates=True)
-        predictions = pd.read_csv(
-            depends_on["predictions"], index_col=0, parse_dates=True,
+        forecasts = pd.read_csv(
+            depends_on["forecasts"],
+            index_col=0,
+            parse_dates=True,
         )
 
-        fig = plot_predictions(data, predictions)
+        fig = plot_forecasts(data, forecasts)
 
         fig.write_image(produces)
 
+
+@pytask.mark.depends_on(BLD / "python" / "forecasts" / "metrics.csv")
+@pytask.mark.produces(BLD / "python" / "figures" / "metrics.png")
+def task_plot_metrics(depends_on, produces):
+    measures = pd.read_csv(depends_on, index_col=0, parse_dates=True)
+
+    fig = plot_metrics(measures)
+
+    fig.write_image(produces)
+
+
+""" @pytask.mark.depends_on( BLD / "python" / "") """
 
 """ for group in GROUPS:
 

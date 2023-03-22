@@ -3,7 +3,7 @@
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
-from tsaf.analysis.predict import predict_prob_by_age
+from tsaf.analysis.forecast import predict_prob_by_age
 
 
 @pytest.fixture()

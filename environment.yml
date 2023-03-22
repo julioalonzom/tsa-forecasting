@@ -24,6 +24,7 @@ dependencies:
   - python=3.11
   - pyyaml
   - setuptools_scm
+  - scikit-learn
   - statsmodels
   - toml
   - pip:
