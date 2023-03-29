@@ -1,36 +1,41 @@
-"""Tests for the regression model."""
+"""Tests for the model."""
 
 import numpy as np
 import pandas as pd
 import pytest
-from tsaf.analysis.model import fit_logit_model
-
-DESIRED_PRECISION = 10e-2
+from tsaf.analysis.model import fit_model
 
 
 @pytest.fixture()
-def data():
-    np.random.seed(0)
-    x = np.random.normal(size=100_000)
-    coef = 2.0
-    prob = 1 / (1 + np.exp(-coef * x))
-    return pd.DataFrame(
-        {"outcome_numerical": np.random.binomial(1, prob), "covariate": x},
-    )
+def mock_data():
+    """Mock time series data for testing.
+
+    Returns:
+        array-like: A mock time series data array of length 500.
+
+    """
+    np.random.seed(123)
+    trend = np.arange(0, 500)
+    seasonal = np.sin(np.linspace(0, 2 * np.pi, 500))
+    noise = np.random.normal(0, 1, 500)
+    data = pd.Series(10 + trend + 2 * seasonal + noise)
+    return data
 
 
-@pytest.fixture()
-def data_info():
-    return {"outcome": "outcome", "outcome_numerical": "outcome_numerical"}
+def test_fit_model_returns_model_object(mock_data):
+    """Test that the fit_model function returns a model object."""
+    model = fit_model(mock_data, "hw")
+    assert model is not None
 
 
-def test_fit_logit_model_recover_coefficients(data, data_info):
-    model = fit_logit_model(data, data_info, model_type="linear")
-    params = model.params
-    assert np.abs(params["Intercept"]) < DESIRED_PRECISION
-    assert np.abs(params["covariate"] - 2.0) < DESIRED_PRECISION
+def test_fit_model_returns_arima_model_object(mock_data):
+    """Test that the fit_model function returns an ARIMA model object."""
+    model = fit_model(mock_data, "arima")
+    assert model is not None
 
 
-def test_fit_logit_model_error_model_type(data, data_info):
-    with pytest.raises(ValueError):  # noqa: PT011
-        assert fit_logit_model(data, data_info, model_type="quadratic")
+def test_fit_model_raises_value_error_with_invalid_model_type(mock_data):
+    """Test that the fit_model function raises a ValueError with an invalid model
+    type."""
+    with pytest.raises(ValueError):
+        fit_model(mock_data, "invalid_model_type")

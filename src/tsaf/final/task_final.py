@@ -18,6 +18,9 @@ for model_type in ["hw", "arima"]:
 
     @pytask.mark.task(id=model_type, kwargs=kwargs)
     def task_plot_forecasts(depends_on, produces):
+        """Plot the forecasts for a given model type and save the resulting figure to a
+        file.
+        """
         data = pd.read_csv(depends_on["data"], index_col=0, parse_dates=True)
         forecasts = pd.read_csv(
             depends_on["forecasts"],
@@ -33,44 +36,25 @@ for model_type in ["hw", "arima"]:
 @pytask.mark.depends_on(BLD / "python" / "forecasts" / "metrics.csv")
 @pytask.mark.produces(BLD / "python" / "figures" / "metrics.png")
 def task_plot_metrics(depends_on, produces):
-    measures = pd.read_csv(depends_on, index_col=0, parse_dates=True)
+    """Plot the evaluation metrics for each model and save the resulting figure to a
+    file.
+    """
+    measures = pd.read_csv(depends_on)
 
     fig = plot_metrics(measures)
 
     fig.write_image(produces)
 
 
-""" @pytask.mark.depends_on( BLD / "python" / "") """
+@pytask.mark.depends_on(BLD / "python" / "forecasts" / "metrics.csv")
+@pytask.mark.produces(BLD / "python" / "tables" / "metrics.tex")
+def task_csv_to_latex_table(depends_on, produces):
+    """Convert the evaluation metrics in CSV format to a LaTeX table and save it to a
+    file.
+    """
+    df = pd.read_csv(depends_on)
 
-""" for group in GROUPS:
+    table = df.to_latex(index=False, caption="Values of the different measures.")
 
-    kwargs = {
-        "group": group,
-        "depends_on": {"predictions": BLD / "python" / "predictions" / f"{group}.csv"},
-        "produces": BLD / "python" / "figures" / f"smoking_by_{group}.png",
-    }
-
-    @pytask.mark.depends_on(
-        {
-            "data_info": SRC / "data_management" / "data_info.yaml",
-            "data": BLD / "python" / "data" / "data_clean.csv",
-        },
-    )
-    @pytask.mark.task(id=group, kwargs=kwargs)
-    def task_plot_results_by_age_python(depends_on, group, produces):
-        """ """
-        data_info = read_yaml(depends_on["data_info"])
-        data = pd.read_csv(depends_on["data"])
-        predictions = pd.read_csv(depends_on["predictions"])
-        fig = plot_regression_by_age(data, data_info, predictions, group)
-        fig.write_image(produces)
-
-
-@pytask.mark.depends_on(BLD / "python" / "models" / "model.pickle")
-@pytask.mark.produces(BLD / "python" / "tables" / "estimation_results.tex")
-def task_create_results_table_python(depends_on, produces):
-    """ """
-    model = load_model(depends_on)
-    table = model.summary().as_latex()
     with open(produces, "w") as f:
-        f.writelines(table) """
+        f.write(table)

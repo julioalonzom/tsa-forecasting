@@ -5,11 +5,16 @@ from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
 
-def fit_model(data, model_type):  # later include another model type
-    """
+def fit_model(data, model_type):
+    """Fits a time series model to the provided data using the specified model type.
+
     Args:
-        data: Either unemployment rates or GDP. add later
-        model_type: Either Holt-Winter expontential smoothing ('hw') or ARIMA ('arima').
+        data (array-like): The time series data to fit the model to.
+        model_type (str): The type of model to fit. Currently supported model types are 'hw' (Holt-Winters exponential smoothing) and 'arima' (AutoRegressive Integrated Moving Average).
+
+    Returns:
+        A fitted time series model object of the specified type.
+
     """
     train_size = int(len(data) * 0.7)
     train_data = data[0:train_size]
@@ -19,11 +24,12 @@ def fit_model(data, model_type):  # later include another model type
             train_data,
             trend="add",
             seasonal="add",
-            seasonal_periods=12,
+            seasonal_periods=52,
+            damped_trend=True,
         ).fit()
 
     elif model_type == "arima":
-        fit = ARIMA(train_data, order=(1, 1, 1)).fit()
+        fit = ARIMA(train_data, order=(2, 0, 0)).fit()
 
     else:
         message = "Only 'hw' and 'arima' model_type is supported right now."

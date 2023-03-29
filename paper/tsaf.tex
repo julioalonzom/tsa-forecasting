@@ -19,6 +19,7 @@
 % \usepackage{pdf14} % Enable for Manuscriptcentral -- can't handle pdf 1.5
 % \usepackage{endfloat} % Enable to move tables / figures to the end. Useful for some
 % submissions.
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
 
 \usepackage[
     natbib=true,
@@ -34,20 +35,7 @@
 \AtBeginDocument{\toggletrue{blx@useprefix}}
 \AtBeginBibliography{\togglefalse{blx@useprefix}}
 \setlength{\bibitemsep}{1.5ex}
-\addbibresource{../../paper/refs.bib}
-
-\usepackage[unicode=true]{hyperref}
-\hypersetup{
-    colorlinks=true,
-    linkcolor=black,
-    anchorcolor=black,
-    citecolor=NavyBlue,
-    filecolor=black,
-    menucolor=black,
-    runcolor=black,
-    urlcolor=NavyBlue
-}
-
+\addbibresource{../../paper/refs.bib} % fix this
 
 \widowpenalty=10000
 \clubpenalty=10000
@@ -56,11 +44,7 @@
 \setlength{\parindent}{0ex}
 \setstretch{1.5}
 
-
-\begin{document}
-
-\title{Time Series Forecasting\thanks{Julio Alonzo, University of Bonn. Email: \href{mailto:j.c.alonzo.muller@gmail.com}{\nolinkurl{j [dot] c [dot] alonzo [dot] muller [at] gmail [dot] com}}.}}
-
+\title{Time Series Forecasting\thanks{Julio Alonzo, University of Bonn. Email: \href{mailto:j.c.alonzo.muller@gmail.com}{\nolinkurl{j.c.alonzo.muller@gmail.com}}. Template from \cite{GaudeckerEconProjectTemplates}}}
 \author{Julio Alonzo}
 
 \date{
@@ -69,70 +53,60 @@
     \today
 }
 
+\begin{document}
 \maketitle
 
-
 \begin{abstract}
-    Some abstract here.
+This is a project where a couple of time series forecasting methods are applied to unemployment rate data.
 \end{abstract}
 
-\clearpage
+\section{Introduction}
 
+Time series are highly relevant in economics. It is of interest to have methods that allow us to forecast their development.
+I assume that if one were to formulate a research question for this project it would be along the lines of: how does the performance of time series models vary across economic indicators such as the unemployment rate?
+Of course I don't pretend to provide a particularly rigorous answer to the aforementioned question, which could very well be the task of a master thesis. Here I pretend no more than to document my learning process of the basics of time series analysis\footnote{Task for which \cite{huang2022applied} came in handy.} and how to use python as a tool in this context.
 
-\section{Introduction} % (fold)
-\label{sec:introduction}
+The data was taken from \url{https://fred.stlouisfed.org/series/UNRATE}. The data was already clean so no complex data cleaning function waas required.
 
-If you are using this template, please cite this item from the references:
-\citet{GaudeckerEconProjectTemplates}.
-
-The data set for the example project is taken from
-\url{https://www.stem.org.uk/resources/elibrary/resource/28452/large-datasets-stats4schools}.
-It contains data on smoking habits in the UK, with 1691 observations and 12 variables.
-We consider only 4 of the 12 features for the prediction of the variable
-\texttt{smoking}: \texttt{marital\_status}, \texttt{highest\_qualification},
-\texttt{gender} and \texttt{age}. We model the dependence using a Logistic model. All
-numerical features are included linearly, while categorical features are expanded into
-dummy variables. Figures below illustrate the model predictions over the lifetime. You
-will find one figure and one estimation summary table for each installed programming
-language.
-
-
+\section{Graphs and Tables}
 
 \begin{figure}[H]
 
     \centering
-    \includegraphics[width=0.85\textwidth]{../python/figures/smoking_by_marital_status}
+    \includegraphics[width=0.8\textwidth]{../python/figures/hw_forecasts.png}
 
-    \caption{\emph{Python:} Model predictions of the smoking probability over the
-        lifetime. Each colored line represents a case where marital status is fixed to one
-        of the values present in the data set.}
-    \label{fig:python-predictions}
+    \caption{Forecasted values using the \emph{Holt-Winters} method plotted against the actual data.}
+    \label{fig:hw}
+
+\end{figure}
+
+\begin{figure}[H]
+
+    \centering
+    \includegraphics[width=0.8\textwidth]{../python/figures/arima_forecasts.png}
+
+    \caption{Forecasted values using the \emph{ARIMA} method plotted against the actual data.}
+    \label{fig:arima}
+
+\end{figure}
+
+\begin{figure}[H]
+
+    \centering
+    \includegraphics[width=0.8\textwidth]{../python/figures/metrics.png}
+
+    \caption{Different measures of the accuracy of both methods employed for forecasting.}
+    \label{fig:measures}
 
 \end{figure}
 
 
-\begin{table}[!h]
-    \input{../python/tables/estimation_results.tex}
-    \caption{\label{tab:python-summary}\emph{Python:} Estimation results of the
-        linear Logistic regression.}
-\end{table}
 
-
-
-
-% section introduction (end)
-
-
+\input{../python/tables/metrics.tex}
 
 \setstretch{1}
 \printbibliography
 \setstretch{1.5}
 
-
-% \appendix
-
-% The chngctr package is needed for the following lines.
-% \counterwithin{table}{section}
-% \counterwithin{figure}{section}
 
 \end{document}
