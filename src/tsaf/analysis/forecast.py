@@ -24,6 +24,7 @@ def forecast(data, model):
 
     forecasts = model.forecast(len(test_data))
     forecasts = forecasts.to_frame(name="PRED")
+    forecasts.index = pd.date_range(start=test_data.index[0], periods=len(test_data))
     forecasts.index.name = "DATE"
     return forecasts
 
