@@ -50,10 +50,11 @@
 
 
 \begin{frame}[t]
-    \frametitle{heading here}
+    \frametitle{Time Series Forecasting}
     \begin{itemize}
-        \item<+-> Please cite this template as: \citet{GaudeckerEconProjectTemplates}
-        \item<+-> Example data is taken from \url{https://www.stem.org.uk/resources/elibrary/resource/28452/large-datasets-stats4schools}
+        \item Please cite this template as: \citet{GaudeckerEconProjectTemplates}
+        \item The data was taken from \url{https://fred.stlouisfed.org/series/UNRATE}. The data was already clean so no complex data cleaning function was required.
+        \item \citet{huang2022applied} was also an important source.
     \end{itemize}
     \note{~}
 \end{frame}
@@ -64,30 +65,45 @@
     \begin{figure}[H]
 
         \centering
-        \includegraphics[width=0.5\textwidth]{../python/figures/smoking_by_marital_status}
+        \includegraphics[width=0.7\textwidth]{../python/figures/hw_forecasts.png}
 
-        \caption{\emph{Python:} Model predictions of the smoking probability over the
-            lifetime. Each colored line represents a case where marital status is fixed to
-            one of the values present in the data set.}
-        \label{fig:python-predictions}
+        \caption{Forecasted values using the \emph{Holt-Winters} method plotted against the actual data.}
+        \label{fig:hw}
 
     \end{figure}
+\end{frame}
+
+\begin{frame}[t]
+    \begin{figure}[H]
+
+        \centering
+        \includegraphics[width=0.7\textwidth]{../python/figures/arima_forecasts.png}
+
+        \caption{Forecasted values using the \emph{ARIMA} method plotted against the actual data.}
+        \label{fig:arima}
+
+    \end{figure}
+\end{frame}
+
+\begin{frame}[t]
+    \begin{figure}[H]
+
+        \centering
+        \includegraphics[width=0.7\textwidth]{../python/figures/metrics.png}
+
+        \caption{Different measures of the accuracy of both methods employed for forecasting.}
+        \label{fig:measures}
+
+    \end{figure}
+\end{frame}
+
+\begin{frame}[t]
+    \input{../python/tables/metrics.tex}
 \end{frame}
 
 
 
 
-
-
-% Print black screen only in presentation mode for finishing up.
-\mode<beamer> {
-    \beamersetaveragebackground{black}
-    \begin{frame}
-        \frametitle{}
-    \end{frame}
-
-    \beamersetaveragebackground{white}
-}
 
 \begin{frame}[allowframebreaks]
     \frametitle{References}

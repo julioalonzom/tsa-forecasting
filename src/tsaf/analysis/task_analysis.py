@@ -5,7 +5,7 @@ import pytask
 
 from tsaf.analysis.forecast import forecast, metrics
 from tsaf.analysis.model import fit_model, load_model
-from tsaf.config import BLD
+from tsaf.config import BLD, SRC
 
 for model_type in ["hw", "arima"]:
 
@@ -17,7 +17,7 @@ for model_type in ["hw", "arima"]:
     @pytask.mark.depends_on(
         {
             "scripts": ["model.py", "forecast.py"],
-            "data": BLD / "python" / "data" / "data_clean.csv",
+            "data": SRC / "data" / "data.csv",
         },
     )
     @pytask.mark.task(id=model_type, kwargs=kwargs)
@@ -32,7 +32,7 @@ for model_type in ["hw", "arima"]:
 
 @pytask.mark.depends_on(
     {
-        "data": BLD / "python" / "data" / "data_clean.csv",
+        "data": SRC / "data" / "data.csv",
         "hw_model": BLD / "python" / "models" / "hw_model.pickle",
         "arima_model": BLD / "python" / "models" / "arima_model.pickle",
     },
@@ -59,7 +59,7 @@ def task_forecast(depends_on, produces):
 
 @pytask.mark.depends_on(
     {
-        "data": BLD / "python" / "data" / "data_clean.csv",
+        "data": SRC / "data" / "data.csv",
         "hw_forecasts": BLD / "python" / "forecasts" / "hw_forecasts.csv",
         "arima_forecasts": BLD / "python" / "forecasts" / "arima_forecasts.csv",
     },

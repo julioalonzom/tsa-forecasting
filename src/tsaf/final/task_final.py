@@ -3,7 +3,7 @@
 import pandas as pd
 import pytask
 
-from tsaf.config import BLD
+from tsaf.config import BLD, SRC
 from tsaf.final.plot import plot_forecasts, plot_metrics
 
 for model_type in ["hw", "arima"]:
@@ -11,7 +11,7 @@ for model_type in ["hw", "arima"]:
     kwargs = {
         "produces": BLD / "python" / "figures" / f"{model_type}_forecasts.png",
         "depends_on": {
-            "data": BLD / "python" / "data" / "data_clean.csv",
+            "data": SRC / "data" / "data.csv",
             "forecasts": BLD / "python" / "forecasts" / f"{model_type}_forecasts.csv",
         },
     }
