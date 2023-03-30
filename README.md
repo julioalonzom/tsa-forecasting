@@ -8,7 +8,13 @@ This project focuses on using time series analysis methods, in particular Holt-W
 
 ## Usage
 
-To get started, create and activate the environment with
+To get started, clone this repository
+
+```console
+$ git clone https://github.com/julioalonzom/tsa-forecasting
+```
+
+Then, create and activate the environment with
 
 ```console
 $ conda/mamba env create
@@ -20,6 +26,13 @@ To build the project, type
 ```console
 $ pytask
 ```
+
+## Structure of the project
+
+- The two models are fitted on the data.
+- Forecasted values are generated.
+- Different accuracy measures are produced to evaluate performance of both methods.
+- The results are plotted and a table with the measures is produced.
 
 ## Credits
 
